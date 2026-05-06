@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passive Voice Interactive Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffe4e6 0%, #f0fdf4 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        .word-error {
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .word-error:hover {
+            background-color: #fecdd3;
+        }
+        .word-selected {
+            background-color: #fb7185 !important;
+            color: white;
+            text-decoration: line-through;
+        }
+        .explanation {
+            display: none;
+        }
+        .correct-answer { color: #16a34a; font-weight: bold; }
+        .wrong-answer { color: #dc2626; font-weight: bold; }
+        
+        .sortable-item {
+            cursor: grab;
+            background: white;
+            border: 1px solid #e5e7eb;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sortable-item:active { cursor: grabbing; }
+        .sortable-ghost { opacity: 0.4; background: #fbcfe8; }
+
+        .mcq-option {
+            cursor: pointer;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s;
+            background: white;
+        }
+        .mcq-option:hover { border-color: #f9a8d4; }
+        .mcq-option.selected {
+            border-color: #ec4899;
+            background-color: #fdf2f8;
+        }
+        .mcq-option.correct-choice { background-color: #dcfce7; border-color: #22c55e; }
+        .mcq-option.wrong-choice { background-color: #fee2e2; border-color: #ef4444; }
+
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div id="loading-overlay">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+    </div>
+
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Luyện tập Câu Bị Động</h1>
+
+        <!-- Student Info -->
+        <section class="card p-6 mb-8 border-l-8 border-yellow-400">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Thông tin học sinh</h2>
+            <input type="text" id="student-name" placeholder="Nhập họ tên của em..." class="w-full p-3 rounded-lg border-2 border-yellow-200 focus:border-yellow-400 outline-none">
+        </section>
+
+        <!-- Exercise 4 -->
+        <section class="card p-6 mb-8 border-l-8 border-pink-300">
+            <h2 class="text-xl font-semibold text-pink-700 mb-4">Bài 4: Viết lại câu sang dạng Bị động</h2>
+            <div id="ex4-container" class="space-y-6">
+                <div class="q-block" data-answer="have been closed down.">
+                    <p class="text-sm text-gray-500 mb-1">2. They have closed down some nuclear power plants.</p>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span>Some nuclear power plants</span>
+                        <input type="text" id="ex4-q2" class="border-b-2 border-pink-300 bg-transparent focus:outline-none focus:border-pink-500 px-2 flex-1 min-w-[200px]" placeholder="...">
+                    </div>
+                    <div class="explanation text-sm mt-2 p-2 rounded bg-green-50 text-green-800" id="expl-ex4-q2"><b>Giải thích:</b> Hiện tại hoàn thành bị động: <b>have/has + been + V3/ed</b>.</div>
+                </div>
+                <div class="q-block" data-answer="can be used for lighting homes.">
+                    <p class="text-sm text-gray-500 mb-1">3. They can use the electricity for lighting homes.</p>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span>The electricity</span>
+                        <input type="text" id="ex4-q3" class="border-b-2 border-pink-300 bg-transparent focus:outline-none focus:border-pink-500 px-2 flex-1 min-w-[200px]" placeholder="...">
+                    </div>
+                    <div class="explanation text-sm mt-2 p-2 rounded bg-green-50 text-green-800" id="expl-ex4-q3"><b>Giải thích:</b> can + be + V3/ed.</div>
+                </div>
+                <div class="q-block" data-answer="will be subsidised by the government.">
+                    <p class="text-sm text-gray-500 mb-1">4. The government will subsidise new wind-turbine installations.</p>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span>New wind-turbine installations</span>
+                        <input type="text" id="ex4-q4" class="border-b-2 border-pink-300 bg-transparent focus:outline-none focus:border-pink-500 px-2 flex-1 min-w-[200px]" placeholder="...">
+                    </div>
+                    <div class="explanation text-sm mt-2 p-2 rounded bg-green-50 text-green-800" id="expl-ex4-q4"><b>Giải thích:</b> will + be + V3/ed.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercise 5 -->
+        <section class="card p-6 mb-8 border-l-8 border-green-300">
+            <h2 class="text-xl font-semibold text-green-700 mb-4">Bài 5: Tìm và sửa lỗi sai</h2>
+            <div id="ex5-questions" class="space-y-6"></div>
+        </section>
+
+        <!-- Exercise MCQs -->
+        <section class="card p-6 mb-8 border-l-8 border-purple-300">
+            <h2 class="text-xl font-semibold text-purple-700 mb-4">Bài 6: Trắc nghiệm (MCQs)</h2>
+            <div id="mcq-container" class="space-y-8"></div>
+        </section>
+
+        <!-- Exercise Sortable -->
+        <section class="card p-6 mb-8 border-l-8 border-blue-300">
+            <h2 class="text-xl font-semibold text-blue-700 mb-4">Bài 7: Sắp xếp câu thành quy trình</h2>
+            <div id="sorting-area" class="space-y-10"></div>
+        </section>
+
+        <div class="flex flex-col items-center gap-4 pb-12">
+            <button onclick="handleSubmit()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-10 rounded-full transition-transform active:scale-95 shadow-lg">
+                Nộp bài & Gửi kết quả
+            </button>
+            <div id="result-board" class="hidden text-center card p-6 w-full border-2 border-pink-200">
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Kết quả</h3>
+                <p id="score-text" class="text-xl text-pink-600 font-bold"></p>
+                <p id="status-text" class="text-sm text-gray-500 mt-2 italic"></p>
+                <button onclick="location.reload()" class="mt-4 text-sm text-blue-500 underline">Làm lại</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // URL GOOGLE SCRIPT ĐÃ ĐƯỢC CẬP NHẬT
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqesx-YiehP_SVcP9_rlYhkfPPmdlT_8I3KyvHxZmN3-KiFJcyFmUV3NaHnK_4oYE/exec";
+
+        const mcqData = [
+            { q: "After collection, the raw materials are ______ to the processing plant by truck.", options: ["delivered", "transported", "converted", "assembled"], correct: 1, expl: "Transported (vận chuyển) nguyên liệu thô." },
+            { q: "In the next stage, the liquid is ______ to remove harmful substances.", options: ["transported", "purified", "delivered", "assembled"], correct: 1, expl: "Purified (làm sạch) chất lỏng." },
+            { q: "The solid material is then ______ into smaller pieces using a machine.", options: ["converted", "cut", "purified", "delivered"], correct: 1, expl: "Cut (cắt) chia nhỏ vật liệu rắn." },
+            { q: "During processing, the raw material is ______ into a usable product.", options: ["transported", "packaged", "converted", "cut"], correct: 2, expl: "Converted (chuyển đổi) thành sản phẩm." },
+            { q: "The mixture is heated until it begins to ______ and form a solid shape.", options: ["deliver", "transport", "solidify", "assemble"], correct: 2, expl: "Solidify (hóa rắn/đông đặc)." },
+            { q: "Next, the products are ______ to supermarkets for sale.", options: ["crushed", "delivered", "converted", "filtered"], correct: 1, expl: "Delivered (giao hàng) thành phẩm." },
+            { q: "At this stage, the large rocks are ______ into fine powder.", options: ["assembled", "purified", "crushed", "transported"], correct: 2, expl: "Crushed (nghiền nát)." },
+            { q: "The liquid passes through a filter to ______ unwanted particles.", options: ["assemble", "remove", "deliver", "convert"], correct: 1, expl: "Remove (loại bỏ) tạp chất." },
+            { q: "In the final stage, all parts are ______ together to create the finished product.", options: ["transported", "assembled", "purified", "crushed"], correct: 1, expl: "Assembled (lắp ráp) các bộ phận." },
+            { q: "Before distribution, the products are carefully ______ into boxes.", options: ["packaged", "converted", "filtered", "solidified"], correct: 0, expl: "Packaged (đóng gói) vào hộp." }
+        ];
+
+        const ex5Data = [
+            { original: "Children are easily influence by others, by their environment or by their parents.", errorWord: "influence", correction: "influenced", explanation: "Bị động: are + V3/ed." },
+            { original: "I think some problems which exist in this world can solve by money.", errorWord: "solve", correction: "be solved", explanation: "Bị động với can: can + be + V3/ed." },
+            { original: "In my country, few schools teach students by computer but not all subjects teach by computer.", errorWord: "teach", correction: "are taught", explanation: "Môn học được dạy: are taught." },
+            { original: "Moreover, unnecessary restrictions should reduce by the government.", errorWord: "reduce", correction: "be reduced", explanation: "should + be + V3/ed." },
+            { original: "The primary reason for their disapproval is the damage to the environment which caused by mass tourism.", errorWord: "caused", correction: "was caused", explanation: "Mệnh đề quan hệ bị động: which was caused." },
+            { original: "The result of this research shows that in the UK a great proportion of household tasks are doing by women.", errorWord: "doing", correction: "done", explanation: "Bị động hiện tại: are done." }
+        ];
+
+        const sortingData = [
+            { id: 'sort-1', title: '1. Quy trình lọc nước', steps: [
+                {id: 'A', text: '⬜ A. The water is then filtered to remove small particles.'},
+                {id: 'B', text: '⬜ B. Initially, raw water is collected from rivers.'},
+                {id: 'C', text: '⬜ C. Finally, the clean water is stored and distributed.'},
+                {id: 'D', text: '⬜ D. After that, chemicals are added to kill bacteria.'},
+                {id: 'E', text: '⬜ E. Next, the water is transported to a treatment facility.'}
+            ], ans: ['B','E','A','D','C'], expl: "B -> E -> A -> D -> C." },
+            { id: 'sort-2', title: '2. Quy trình sản xuất cà phê', steps: [
+                {id: 'A', text: '⬜ A. The beans are then roasted at a high temperature.'},
+                {id: 'B', text: '⬜ B. First, coffee beans are harvested from plants.'},
+                {id: 'C', text: '⬜ C. Next, they are dried under the sun.'},
+                {id: 'D', text: '⬜ D. Finally, the roasted beans are packaged and sold.'},
+                {id: 'E', text: '⬜ E. After that, the beans are ground into powder.'}
+            ], ans: ['B','C','A','E','D'], expl: "B -> C -> A -> E -> D." },
+            { id: 'sort-3', title: '3. Quy trình tái chế chai nhựa', steps: [
+                {id: 'A', text: '⬜ A. The bottles are then crushed into small pieces.'},
+                {id: 'B', text: '⬜ B. Initially, used plastic bottles are collected.'},
+                {id: 'C', text: '⬜ C. Next, they are cleaned to remove dirt.'},
+                {id: 'D', text: '⬜ D. Finally, the material is melted into new products.'},
+                {id: 'E', text: '⬜ E. After that, the pieces are processed into pellets.'}
+            ], ans: ['B','C','A','E','D'], expl: "B -> C -> A -> E -> D." }
+        ];
+
+        function init() {
+            const mcqCont = document.getElementById('mcq-container');
+            mcqData.forEach((item, i) => {
+                const div = document.createElement('div');
+                div.innerHTML = `<p class="font-medium text-gray-800 mb-3">${i+1}. ${item.q}</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="mcq-options-${i}">
+                        ${item.options.map((opt, oi) => `<div class="mcq-option p-3 rounded-lg border text-sm" onclick="selectMCQ(${i}, ${oi})">${String.fromCharCode(65+oi)}. ${opt}</div>`).join('')}
+                    </div>
+                    <div class="explanation text-sm mt-2 p-2 rounded bg-purple-50 text-purple-800" id="expl-mcq-${i}"><b>Giải thích:</b> ${item.expl}</div>`;
+                mcqCont.appendChild(div);
+            });
+
+            const container5 = document.getElementById('ex5-questions');
+            ex5Data.forEach((item, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'q-block-5';
+                qDiv.innerHTML = `<p class="text-gray-800 leading-relaxed" id="p-ex5-${index}">${index + 1}. </p>
+                    <div id="input-area-${index}" class="mt-2 hidden flex items-center gap-2"><input type="text" id="ex5-input-${index}" class="border-b border-green-400 bg-transparent outline-none px-2 w-40" placeholder="Sửa lỗi..."></div>
+                    <div class="explanation text-sm mt-2 p-2 rounded bg-green-50 text-green-800" id="expl-ex5-${index}"><b>Giải thích:</b> ${item.explanation}</div>`;
+                container5.appendChild(qDiv);
+                item.original.split(' ').forEach(word => {
+                    const span = document.createElement('span');
+                    span.innerText = word + " ";
+                    span.className = 'word-error';
+                    span.onclick = () => {
+                        qDiv.querySelectorAll('.word-error').forEach(s => s.classList.remove('word-selected'));
+                        span.classList.add('word-selected');
+                        document.getElementById(`input-area-${index}`).classList.remove('hidden');
+                        qDiv.dataset.selected = word.replace(/[.,]/g, "");
+                    };
+                    document.getElementById(`p-ex5-${index}`).appendChild(span);
+                });
+            });
+
+            const sortArea = document.getElementById('sorting-area');
+            sortingData.forEach((data, i) => {
+                const div = document.createElement('div');
+                div.innerHTML = `<h3 class="font-bold text-gray-700 mb-3">${data.title}</h3>
+                    <ul id="${data.id}" class="space-y-2">${data.steps.map(s => `<li class="sortable-item p-3 rounded shadow-sm" data-id="${s.id}">${s.text}</li>`).join('')}</ul>
+                    <div class="explanation text-sm mt-3 p-2 rounded bg-blue-50 text-blue-800" id="expl-sort-${i}"><b>Giải thích:</b> ${data.expl}</div>`;
+                sortArea.appendChild(div);
+                new Sortable(document.getElementById(data.id), { animation: 150 });
+            });
+        }
+
+        function selectMCQ(qIdx, oIdx) {
+            const container = document.getElementById(`mcq-options-${qIdx}`);
+            container.querySelectorAll('.mcq-option').forEach(opt => opt.classList.remove('selected'));
+            container.children[oIdx].classList.add('selected');
+            container.dataset.selected = oIdx;
+        }
+
+        async function handleSubmit() {
+            const name = document.getElementById('student-name').value.trim();
+            if (!name) {
+                alert("Vui lòng nhập tên trước khi nộp bài!");
+                return;
+            }
+
+            document.getElementById('loading-overlay').style.display = 'flex';
+            
+            let score = 0;
+            const total = 3 + ex5Data.length + mcqData.length + 3;
+
+            // Check Ex 4
+            [2,3,4].forEach(i => {
+                const input = document.getElementById(`ex4-q${i}`);
+                if (input.value.toLowerCase().includes(input.closest('.q-block').dataset.answer.toLowerCase().split('.')[0])) {
+                    score++; input.classList.add('correct-answer');
+                } else { input.classList.add('wrong-answer'); }
+                document.getElementById(`expl-ex4-q${i}`).style.display = 'block';
+            });
+
+            // Check Ex 5
+            ex5Data.forEach((item, i) => {
+                const qBlock = document.querySelector(`.q-block-5:nth-child(${i+1})`);
+                const input = document.getElementById(`ex5-input-${i}`);
+                if (qBlock.dataset.selected === item.errorWord && input.value.toLowerCase().trim() === item.correction.toLowerCase()) {
+                    score++; input.classList.add('correct-answer');
+                } else { input.classList.add('wrong-answer'); }
+                document.getElementById(`expl-ex5-${i}`).style.display = 'block';
+            });
+
+            // Check MCQ
+            mcqData.forEach((item, i) => {
+                const opts = document.getElementById(`mcq-options-${i}`);
+                const selected = parseInt(opts.dataset.selected);
+                if (selected === item.correct) {
+                    score++; opts.children[selected].classList.add('correct-choice');
+                } else if (!isNaN(selected)) {
+                    opts.children[selected].classList.add('wrong-choice');
+                }
+                opts.children[item.correct].classList.add('correct-choice');
+                document.getElementById(`expl-mcq-${i}`).style.display = 'block';
+            });
+
+            // Check Sorting
+            sortingData.forEach((data, i) => {
+                const container = document.getElementById(data.id);
+                const currentOrder = Array.from(container.children).map(li => li.dataset.id);
+                if (JSON.stringify(currentOrder) === JSON.stringify(data.ans)) {
+                    score++; container.classList.add('border-2', 'border-green-400');
+                } else { container.classList.add('border-2', 'border-red-400'); }
+                document.getElementById(`expl-sort-${i}`).style.display = 'block';
+            });
+
+            // Send to Google Sheet
+            const statusText = document.getElementById('status-text');
+            try {
+                // Sử dụng fetch với JSON stringify cho dữ liệu
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, score: score, total: total })
+                });
+                statusText.innerText = "Kết quả đã được gửi thành công về máy chủ giáo viên.";
+            } catch (error) {
+                console.error("Error sending data:", error);
+                statusText.innerText = "Lỗi khi gửi kết quả. Vui lòng chụp màn hình lại kết quả bên trên.";
+            }
+
+            document.getElementById('loading-overlay').style.display = 'none';
+            document.getElementById('result-board').classList.remove('hidden');
+            document.getElementById('score-text').innerText = `${name}: ${score} / ${total}`;
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
